@@ -14,8 +14,32 @@ import (
 type Params map[string]string
 
 type LambdaError interface {
-	Message() string
-	Code() int
+	Code() int       // Returns the HTTP status code
+	Message() string // Returns the error message
+}
+
+// ErrorResponse is the struct that implements the LambdaError interface
+type LambdaErrorResponse struct {
+	CodeValue    int    `json:"code"`    // The error code (e.g., 500, 404)
+	MessageValue string `json:"message"` // A human-readable error message
+}
+
+// Code returns the error code for ErrorResponse
+func (e *LambdaErrorResponse) Code() int {
+	return e.CodeValue
+}
+
+// Message returns the error message for ErrorResponse
+func (e *LambdaErrorResponse) Message() string {
+	return e.MessageValue
+}
+
+// NewLambdaError is a constructor for creating a new LambdaError with code and message
+func NewLambdaError(code int, message string) LambdaError {
+	return &LambdaErrorResponse{
+		CodeValue:    code,
+		MessageValue: message,
+	}
 }
 
 // HandlerFunc defines the type for route handlers
