@@ -5,7 +5,7 @@ import "regexp"
 // buildPathPattern converts a path like "/resource/:id" into a regex pattern
 func buildPathPattern(path string) *regexp.Regexp {
 	pattern := regexp.MustCompile(`:([^/]+)`) // Match `:parameter`
-	regexStr := "^" + pattern.ReplaceAllString(path, `([^/]+)`) + "$"
+	regexStr := "^" + pattern.ReplaceAllString(path, `(?P<$1>[^/]+)`) + "$"
 	return regexp.MustCompile(regexStr)
 }
 
