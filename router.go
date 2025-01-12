@@ -13,8 +13,13 @@ import (
 // Params represents the extracted URL parameters
 type Params map[string]string
 
+type LambdaError interface {
+	Message() string
+	Code() int
+}
+
 // HandlerFunc defines the type for route handlers
-type HandlerFunc func(ctx context.Context, req events.LambdaFunctionURLRequest, params Params) (interface{}, error)
+type HandlerFunc func(ctx context.Context, req events.LambdaFunctionURLRequest, params Params) (interface{}, LambdaError)
 
 // Route holds information about a single route
 type Route struct {
@@ -144,10 +149,10 @@ func (r *Router) isOriginAllowed(origin string) bool {
 }
 
 // Utility to generate error response
-func ErrorResponse(err error) events.LambdaFunctionURLResponse {
+func ErrorResponse(err LambdaError) events.LambdaFunctionURLResponse {
 	return events.LambdaFunctionURLResponse{
-		StatusCode: 500,
-		Body:       fmt.Sprintf("Error: %s", err.Error()),
+		StatusCode: err.Code(),
+		Body:       fmt.Sprintf("Error: %s", err.Message()),
 	}
 }
 
