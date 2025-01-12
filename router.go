@@ -75,9 +75,9 @@ func (r *Router) HandleRequest(ctx context.Context, req events.LambdaFunctionURL
 			params := extractParams(path, route.Pattern)
 			data, err := route.Handler(ctx, req, params)
 			if err != nil {
-				return errorResponse(err), nil
+				return ErrorResponse(err), nil
 			}
-			response = successResponse(data)
+			response = SuccessResponse(data)
 			break
 		}
 	}
@@ -144,7 +144,7 @@ func (r *Router) isOriginAllowed(origin string) bool {
 }
 
 // Utility to generate error response
-func errorResponse(err error) events.LambdaFunctionURLResponse {
+func ErrorResponse(err error) events.LambdaFunctionURLResponse {
 	return events.LambdaFunctionURLResponse{
 		StatusCode: 500,
 		Body:       fmt.Sprintf("Error: %s", err.Error()),
@@ -152,7 +152,7 @@ func errorResponse(err error) events.LambdaFunctionURLResponse {
 }
 
 // Utility to generate success response
-func successResponse(data interface{}) events.LambdaFunctionURLResponse {
+func SuccessResponse(data interface{}) events.LambdaFunctionURLResponse {
 	body, _ := json.Marshal(data) // Ignoring errors for simplicity
 	return events.LambdaFunctionURLResponse{
 		StatusCode: 200,
